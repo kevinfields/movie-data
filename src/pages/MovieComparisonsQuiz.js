@@ -5,6 +5,8 @@ import compareLengths from "../functions/compareLengths";
 import compareRatings from "../functions/compareRatings";
 import MovieCard from "../styling/MovieCard";
 import promptSwitcher from "../functions/promptSwitcher";
+import UserMoviesContext from "../store/user-movies-context";
+import { useContext } from "react";
 
 const shuffle = (array) => {
   let shuffled = array;
@@ -38,7 +40,8 @@ let moviesArray = shuffle([
   "forrest-gump",
 ]);
 
-const MovieComparisonQuiz = () => {
+const MovieComparisonQuiz = (props) => {
+  const moviesContext = useContext(UserMoviesContext);
   const [titles, setTitles] = useState([]);
   const [dates, setDates] = useState([]);
   const [lengths, setLengths] = useState([]);
@@ -149,42 +152,60 @@ const MovieComparisonQuiz = () => {
       setCorrection(true);
     }
     const resetter = async () => {
-      if (rounds <= moviesArray.length - 2) {
+      if (
+        (props.version === "standard" && rounds <= moviesArray.length - 2) ||
+        (props.version === "custom" && rounds <= moviesContext.totalMovies - 2)
+      ) {
         setRounds(rounds + 2);
       } else {
         setRounds(0);
       }
-
-      const movie1 = await axios(
-        "http://www.omdbapi.com/?t=" + moviesArray[rounds] + "&apikey=330b8d3a"
-      );
-      const movie2 = await axios(
-        "http://www.omdbapi.com/?t=" +
-          moviesArray[rounds + 1] +
-          "&apikey=330b8d3a"
-      );
-
-      setDates([
-        JSON.stringify(movie1.data.Released),
-        JSON.stringify(movie2.data.Released),
-      ]);
-      setLengths([
-        JSON.stringify(movie1.data.Runtime),
-        JSON.stringify(movie2.data.Runtime),
-      ]);
-      setRatings([
-        JSON.stringify(movie1.data.Ratings[0].Value),
-        JSON.stringify(movie2.data.Ratings[0].Value),
-      ]);
-      setTitles([
-        JSON.stringify(movie1.data.Title),
-        JSON.stringify(movie2.data.Title),
-      ]);
-      setDescriptions([
-        JSON.stringify(movie1.data.Plot).slice(0, 150),
-        JSON.stringify(movie2.data.Plot).slice(0, 150),
-      ]);
-      setPrompt(promptSwitcher(prompt));
+      let movie1;
+      let movie2;
+      if (props.version === "standard") {
+        movie1 = await axios(
+          "http://www.omdbapi.com/?t=" +
+            moviesArray[rounds] +
+            "&apikey=330b8d3a"
+        );
+        movie2 = await axios(
+          "http://www.omdbapi.com/?t=" +
+            moviesArray[rounds + 1] +
+            "&apikey=330b8d3a"
+        );
+        setDates([
+          JSON.stringify(movie1.data.Released),
+          JSON.stringify(movie2.data.Released),
+        ]);
+        setLengths([
+          JSON.stringify(movie1.data.Runtime),
+          JSON.stringify(movie2.data.Runtime),
+        ]);
+        setRatings([
+          JSON.stringify(movie1.data.Ratings[0].Value),
+          JSON.stringify(movie2.data.Ratings[0].Value),
+        ]);
+        setTitles([
+          JSON.stringify(movie1.data.Title),
+          JSON.stringify(movie2.data.Title),
+        ]);
+        setDescriptions([
+          JSON.stringify(movie1.data.Plot).slice(0, 150),
+          JSON.stringify(movie2.data.Plot).slice(0, 150),
+        ]);
+        setPrompt(promptSwitcher(prompt));
+      } else if (props.version === "custom") {
+        movie1 = moviesContext.movielist[rounds];
+        movie2 = moviesContext.movielist[rounds + 1];
+        setDates([movie1.date, movie2.date]);
+        setLengths([movie1.time, movie2.time]);
+        setRatings([movie1.rating, movie2.rating]);
+        setTitles([movie1.title, movie2.title]);
+        setDescriptions([movie1.plot.slice(0, 150), movie2.plot.slice(0, 150)]);
+        setPrompt(promptSwitcher(prompt));
+      } else {
+        console.log("something went pretty wrong");
+      }
     };
     resetter();
   };
@@ -193,28 +214,49 @@ const MovieComparisonQuiz = () => {
     const renderInfo = async () => {
       console.log("moviesArray[0]: " + moviesArray[0]);
       console.log("moviesArray[1]: " + moviesArray[1]);
-
-      const movie1 = await axios(
-        "http://www.omdbapi.com/?t=" + moviesArray[0] + "&apikey=330b8d3a"
-      );
-      const movie2 = await axios(
-        "http://www.omdbapi.com/?t=" + moviesArray[1] + "&apikey=330b8d3a"
-      );
-      console.log("movie1: " + JSON.stringify(movie1.data.Title));
-      console.log("movie2: " + JSON.stringify(movie2.data.Title));
-      setTitles([
-        JSON.stringify(movie1.data.Title),
-        JSON.stringify(movie2.data.Title),
-      ]);
-      setDescriptions([
-        JSON.stringify(movie1.data.Plot).slice(0, 150) + "...",
-        JSON.stringify(movie2.data.Plot).slice(0, 150) + "...",
-      ]);
-      setDates([
-        JSON.stringify(movie1.data.Released),
-        JSON.stringify(movie2.data.Released),
-      ]);
-      setRounds(0);
+      let movie1;
+      let movie2;
+      if (props.version === "standard") {
+        movie1 = await axios(
+          "http://www.omdbapi.com/?t=" + moviesArray[0] + "&apikey=330b8d3a"
+        );
+        movie2 = await axios(
+          "http://www.omdbapi.com/?t=" + moviesArray[1] + "&apikey=330b8d3a"
+        );
+        console.log("movie1: " + JSON.stringify(movie1.data.Title));
+        console.log("movie2: " + JSON.stringify(movie2.data.Title));
+        setTitles([
+          JSON.stringify(movie1.data.Title),
+          JSON.stringify(movie2.data.Title),
+        ]);
+        setDescriptions([
+          JSON.stringify(movie1.data.Plot).slice(0, 150) + "...",
+          JSON.stringify(movie2.data.Plot).slice(0, 150) + "...",
+        ]);
+        setDates([
+          JSON.stringify(movie1.data.Released),
+          JSON.stringify(movie2.data.Released),
+        ]);
+        setLengths([
+          JSON.stringify(movie1.data.Runtime),
+          JSON.stringify(movie2.data.Runtime),
+        ]);
+        setRatings([
+          JSON.stringify(movie1.data.Ratings[0].Value),
+          JSON.stringify(movie2.data.Ratings[0].Value),
+        ]);
+        setRounds(0);
+      } else if (props.version === "custom") {
+        movie1 = moviesContext.movielist[rounds];
+        movie2 = moviesContext.movielist[rounds + 1];
+        setDates([movie1.date, movie2.date]);
+        setLengths([movie1.time, movie2.time]);
+        setRatings([movie1.rating, movie2.rating]);
+        setTitles([movie1.title, movie2.title]);
+        setDescriptions([movie1.plot.slice(0, 150), movie2.plot.slice(0, 150)]);
+      } else {
+        console.log("something went pretty wrong");
+      }
     };
     renderInfo();
   }, []);

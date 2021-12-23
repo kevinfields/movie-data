@@ -10,6 +10,9 @@ const Links = () => {
           <Link to="/moviecomparisonquiz">Movie Comparison Quiz</Link>
         </p>
         <p className="path">
+          <Link to="/usercomparisonquiz">Custom Comparison Quiz</Link>
+        </p>
+        <p className="path">
           <Link to="/usermovieslist">My List</Link>
         </p>
         <p className="path">

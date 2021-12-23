@@ -10,7 +10,14 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/moviecomparisonquiz" element={<MovieComparisonQuiz />} />
+        <Route
+          path="/moviecomparisonquiz"
+          element={<MovieComparisonQuiz version="standard" />}
+        />
+        <Route
+          path="/usercomparisonquiz"
+          element={<MovieComparisonQuiz version="custom" />}
+        />
         <Route path="/usermovieslist" element={<UserMoviesPage />} />
         <Route path="/addmovies" element={<AddMovies />} />
       </Routes>

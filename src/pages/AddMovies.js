@@ -15,27 +15,48 @@ const AddMovies = () => {
   const [allow, setAllow] = useState(false);
 
   const lookUp = () => {
-    const fetchItems = async () => {
+    const fetchItems = async (instance) => {
       const result = await axios(
         "http://www.omdbapi.com/?t=" + movie + "&apikey=330b8d3a"
       );
-      if (!result.data.Title) return;
+      if (!result.data.Title) {
+        // if there is nothing named that
+        if (instance === 1) {
+          alert("no results");
+          //on the first round of the function call the user is alerted
+        }
+        return;
+      }
       setAllow(true);
+      //when a movie object has been retrieved, allow it's card to appear
       console.log(JSON.stringify(result.data));
       setMovie(JSON.stringify(result.data.Title));
-      setPlot(JSON.stringify(result.data.Plot));
+      setPlot(
+        JSON.stringify(result.data.Plot) +
+          (JSON.stringify(result.data.Plot).length > 232 ? "..." : "")
+      );
+
       setTime(JSON.stringify(result.data.Runtime));
       setRating(JSON.stringify(result.data.Ratings[0].Value));
       setDate(JSON.stringify(result.data.Released));
+      //set all state variables to the data from that object
       setSaved(moviesContext.movieStatus(JSON.stringify(result.data.Title)));
+      //set saved variable dependent on whether or not the user has already
+      //added the movie
     };
-    fetchItems();
+
+    //TODO: figure out whatever part of fetchItems turns the user input into
+    // the closest title in the API, and add a copy of it to the front of
+    // the function so that it only has to be called once.
+    fetchItems(1);
+    fetchItems(2);
   };
 
   const toggleMovieStatusHandler = () => {
     if (moviesContext.movieStatus(movie)) {
       moviesContext.removeMovie(movie);
       setSaved(false);
+      //if it was saved, this button should remove it.
     } else {
       moviesContext.addMovie({
         id: movie,
@@ -47,6 +68,7 @@ const AddMovies = () => {
       });
       setSaved(true);
       console.log(movie);
+      //if it was unsaved, this button should save it
     }
   };
 
@@ -59,6 +81,8 @@ const AddMovies = () => {
       setDate("");
       setAllow(false);
     }
+    //whenever the user starts typing something else, all the other data
+    //should go away (assuming the new data is not another saved movie)
   }, [movie, moviesContext]);
 
   return (
