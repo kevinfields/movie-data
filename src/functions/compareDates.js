@@ -1,6 +1,17 @@
 export default function compareDates(date1, date2, prompt) {
   let firstArray = date1.split(" ");
   let secondArray = date2.split(" ");
+  if (date1 === "" && date2 === "") {
+    return -1;
+  }
+  if (date1 === "") {
+    console.log("no first date");
+    return -1;
+  }
+  if (date2 === "") {
+    console.log("no second date");
+    return -1;
+  }
   let one = 1;
   let zero = 0;
   if (prompt === "y") {

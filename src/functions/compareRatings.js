@@ -2,6 +2,15 @@ export default function compareRatings(r1, r2, prompt) {
   let first = r1.slice(1, 4);
   let second = r2.slice(1, 4);
 
+  if (r1 === "") {
+    console.log("no first rating");
+    first = 0.0;
+  }
+  if (r2 === "") {
+    console.log("no second rating");
+    second = 0.0;
+  }
+
   console.log("first: " + first);
   console.log("second: " + second);
   if (first !== second) {
@@ -13,5 +22,5 @@ export default function compareRatings(r1, r2, prompt) {
   }
 
   console.log("same rating");
-  return 0;
+  return -1;
 }

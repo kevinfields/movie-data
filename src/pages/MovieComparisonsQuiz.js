@@ -70,7 +70,7 @@ const MovieComparisonQuiz = (props) => {
             "."
         );
         break;
-      case "YOUNGER":
+      case "NEWER":
         correct = compareDates(dates[0], dates[1], "y");
         setCorrectResponse(
           titles[0] +
@@ -143,9 +143,8 @@ const MovieComparisonQuiz = (props) => {
 
     if (correct === -1) {
       setScore(score + 1);
-      alert("wow they are actually the same day");
     }
-    if (dates[guess] === dates[correct]) {
+    if (guess === correct) {
       setScore(score + 1);
       setCorrection(false);
     } else {
@@ -272,6 +271,9 @@ const MovieComparisonQuiz = (props) => {
           A
         </button>
       </div>
+      <button id="tiebutton" onClick={(e) => makeGuess(e, -1)}>
+        Tie
+      </button>
       <div className="moviequestion">
         <MovieCard>
           <h3 className="movietitle">{titles[1]}</h3>

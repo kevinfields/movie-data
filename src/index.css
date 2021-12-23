@@ -90,7 +90,7 @@ code {
 #prompt {
   position: fixed;
   left: 310px;
-  top: 100px;
+  top: 80px;
   max-width: 250px;
   line-height: 20px;
 }
@@ -131,4 +131,13 @@ code {
   position: relative;
   max-width: 400px;
   right: -430px;
+}
+
+#tiebutton {
+  position: relative;
+  left: 235px;
+  width: 320px;
+  border: 1px solid black(210, 252, 231);
+  background-color: rgb(210, 252, 231);
+  border-radius: 5px;
 }

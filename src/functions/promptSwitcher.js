@@ -2,7 +2,7 @@ export default function promptSwitcher(prev) {
   console.log("switching from " + prev);
   const promptArray = [
     "OLDER",
-    "YOUNGER",
+    "NEWER",
     "LONGER",
     "SHORTER",
     "RATED HIGHER ON IMDB",

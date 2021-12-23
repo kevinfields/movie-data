@@ -2,6 +2,15 @@ export default function compareLengths(l1, l2, prompt) {
   let first = l1.slice(1, 4);
   let second = l2.slice(1, 4);
 
+  if (l1 === "") {
+    console.log("no first length");
+    first = 0.0;
+  }
+  if (l2 === "") {
+    console.log("no second length");
+    second = 0.0;
+  }
+
   console.log("first: " + first);
   console.log("second: " + second);
   if (first !== second) {
@@ -12,5 +21,5 @@ export default function compareLengths(l1, l2, prompt) {
     }
   }
 
-  return 0;
+  return -1;
 }
