@@ -7,6 +7,7 @@ import MovieCard from "../styling/MovieCard";
 import promptSwitcher from "../functions/promptSwitcher";
 import UserMoviesContext from "../store/user-movies-context";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const shuffle = (array) => {
   let shuffled = array;
@@ -52,6 +53,7 @@ const MovieComparisonQuiz = (props) => {
   const [correction, setCorrection] = useState(false);
   const [correctResponse, setCorrectResponse] = useState("");
   const [prompt, setPrompt] = useState("OLDER");
+  const navigate = useNavigate();
 
   const makeGuess = (e, guess) => {
     e.preventDefault();
@@ -245,7 +247,7 @@ const MovieComparisonQuiz = (props) => {
           JSON.stringify(movie2.data.Ratings[0].Value),
         ]);
         setRounds(0);
-      } else if (props.version === "custom") {
+      } else if (props.version === "custom" && moviesContext.totalMovies > 1) {
         movie1 = moviesContext.movielist[rounds];
         movie2 = moviesContext.movielist[rounds + 1];
         setDates([movie1.date, movie2.date]);
@@ -253,12 +255,15 @@ const MovieComparisonQuiz = (props) => {
         setRatings([movie1.rating, movie2.rating]);
         setTitles([movie1.title, movie2.title]);
         setDescriptions([movie1.plot.slice(0, 150), movie2.plot.slice(0, 150)]);
+        setRounds(0);
       } else {
         console.log("something went pretty wrong");
+        alert("Please select at least 2 movies");
+        navigate("/addmovies");
       }
     };
     renderInfo();
-  }, []);
+  }, [props]);
 
   return (
     <section>
