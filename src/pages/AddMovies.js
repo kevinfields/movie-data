@@ -7,10 +7,14 @@ const AddMovies = () => {
   const moviesContext = useContext(UserMoviesContext);
 
   const [movie, setMovie] = useState("");
-  const [rating, setRating] = useState("");
-  const [plot, setPlot] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+
+  const [details, setDetails] = useState({
+    plot: '',
+    rating: '',
+    time: '',
+    date: ''
+  });
+
   const [saved, setSaved] = useState(false);
   const [allow, setAllow] = useState(false);
 
@@ -31,14 +35,13 @@ const AddMovies = () => {
       //when a movie object has been retrieved, allow it's card to appear
       console.log(JSON.stringify(result.data));
       setMovie(JSON.stringify(result.data.Title));
-      setPlot(
-        JSON.stringify(result.data.Plot) +
-          (JSON.stringify(result.data.Plot).length > 232 ? "..." : "")
-      );
-
-      setTime(JSON.stringify(result.data.Runtime));
-      setRating(JSON.stringify(result.data.Ratings[0].Value));
-      setDate(JSON.stringify(result.data.Released));
+      setDetails({
+        plot: JSON.stringify(result.data.Plot) +
+          (JSON.stringify(result.data.Plot).length > 232 ? "..." : ""),
+        rating: JSON.stringify(result.data.Ratings[0].Value),
+        date: JSON.stringify(result.data.Released),
+        time: JSON.stringify(result.data.Runtime),
+      })
       //set all state variables to the data from that object
       setSaved(moviesContext.movieStatus(JSON.stringify(result.data.Title)));
       //set saved variable dependent on whether or not the user has already
@@ -61,10 +64,10 @@ const AddMovies = () => {
       moviesContext.addMovie({
         id: movie,
         title: movie,
-        plot: plot,
-        time: time,
-        rating: rating,
-        date: date,
+        plot: details.plot,
+        time: details.time,
+        rating: details.rating,
+        date: details.date,
       });
       setSaved(true);
       console.log(movie);
@@ -75,10 +78,12 @@ const AddMovies = () => {
   useEffect(() => {
     if (!moviesContext.movieStatus(movie)) {
       setSaved(false);
-      setPlot("");
-      setTime("");
-      setRating("");
-      setDate("");
+      setDetails({
+        plot: '',
+        rating: '',
+        time: '',
+        date: ''
+      })
       setAllow(false);
     }
     //whenever the user starts typing something else, all the other data
@@ -104,10 +109,10 @@ const AddMovies = () => {
         {allow ? (
           <>
             <p className="moviedetail">{movie}</p>
-            <p className="moviedetail">{rating}</p>
-            <p className="moviedetail">{date}</p>
-            <p className="moviedetail">{time}</p>
-            <p id="movieplot">{plot}</p>
+            <p className="moviedetail">{details.rating}</p>
+            <p className="moviedetail">{details.date}</p>
+            <p className="moviedetail">{details.time}</p>
+            <p id="movieplot">{details.plot}</p>
             <button onClick={() => toggleMovieStatusHandler()}>
               {saved ? "Remove Movie" : "Add Movie"}
             </button>
